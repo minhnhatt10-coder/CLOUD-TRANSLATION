@@ -1,5 +1,3 @@
-import { translate } from '@vitalets/google-translate-api';
-
 // LỚP DỊCH VỤ CHÍNH - HOÀN TOÀN MIỄN PHÍ
 class FreeTranslationService {
     constructor() {
@@ -40,15 +38,28 @@ class FreeTranslationService {
         }
     }
 
-    // PHƯƠNG THỨC 2: Sử dụng @vitalets/google-translate-api
-    async vitaletsTranslate(text, targetLang) {
+    // PHƯƠNG THỨC 2: MyMemory API
+    async myMemoryTranslate(text, targetLang) {
         try {
-            console.log(`Đang dịch với @vitalets: "${text}" sang ${targetLang}`);
-            const res = await translate(text, { to: targetLang });
-            return res.text; // Trả về bản dịch
+            console.log(`Đang dịch với MyMemory: "${text}" sang ${targetLang}`);
+            const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=vi|${targetLang}`;
+            const response = await fetch(url);
+            
+            if (!response.ok) {
+                throw new Error(`Lỗi server: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            
+            if (data && data.responseData && data.responseData.translatedText) {
+                return data.responseData.translatedText; // Trả về bản dịch
+            }
+            
+            throw new Error('Không nhận được bản dịch');
+            
         } catch (error) {
-            console.error('Lỗi @vitalets:', error);
-            throw new Error('vitalets: ' + error.message);
+            console.error('Lỗi MyMemory:', error);
+            throw new Error('MyMemory: ' + error.message);
         }
     }
 
@@ -64,8 +75,8 @@ class FreeTranslationService {
             
             if (this.currentMethod === 'google-free') {
                 result = await this.googleFreeTranslate(text, targetLang);
-            } else if (this.currentMethod === 'vitalets') {
-                result = await this.vitaletsTranslate(text, targetLang);
+            } else if (this.currentMethod === 'mymemory') {
+                result = await this.myMemoryTranslate(text, targetLang);
             }
             
             this.isTranslating = false;
@@ -76,9 +87,9 @@ class FreeTranslationService {
             
             // Tự động chuyển phương thức nếu có lỗi
             if (this.currentMethod === 'google-free') {
-                console.log('Tự động chuyển sang @vitalets...');
-                this.currentMethod = 'vitalets';
-                return await this.vitaletsTranslate(text, targetLang);
+                console.log('Tự động chuyển sang MyMemory...');
+                this.currentMethod = 'mymemory';
+                return await this.myMemoryTranslate(text, targetLang);
             }
             
             throw error;
