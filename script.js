@@ -1,3 +1,5 @@
+import { translate } from '@vitalets/google-translate-api';
+
 // LỚP DỊCH VỤ CHÍNH - HOÀN TOÀN MIỄN PHÍ
 class FreeTranslationService {
     constructor() {
@@ -20,7 +22,6 @@ class FreeTranslationService {
             
             const data = await response.json();
             
-            // Xử lý kết quả từ Google Translate
             if (data && data[0]) {
                 let translatedText = '';
                 data[0].forEach(item => {
@@ -39,41 +40,17 @@ class FreeTranslationService {
         }
     }
 
-   // PHƯƠNG THỨC 2: LibreTranslate (dự phòng)
-async libreTranslate(text, targetLang) {
-    try {
-        console.log(`Đang dịch với LibreTranslate: "${text}" sang ${targetLang}`);
-        
-        const response = await fetch('https://libretranslate.com', {
-            method: 'POST', // Đảm bảo sử dụng phương thức POST
-            headers: {
-                'Content-Type': 'application/json', // Đặt tiêu đề đúng
-            },
-            body: JSON.stringify({
-                q: text, // Văn bản cần dịch
-                source: 'vi', // Ngôn ngữ nguồn
-                target: targetLang, // Ngôn ngữ đích
-                format: 'text' // Định dạng
-            })
-        });
-        
-        if (!response.ok) {
-            throw new Error(`Lỗi server: ${response.status}`);
+    // PHƯƠNG THỨC 2: Sử dụng @vitalets/google-translate-api
+    async vitaletsTranslate(text, targetLang) {
+        try {
+            console.log(`Đang dịch với @vitalets: "${text}" sang ${targetLang}`);
+            const res = await translate(text, { to: targetLang });
+            return res.text; // Trả về bản dịch
+        } catch (error) {
+            console.error('Lỗi @vitalets:', error);
+            throw new Error('vitalets: ' + error.message);
         }
-        
-        const data = await response.json();
-        
-        if (data && data.translatedText) {
-            return data.translatedText; // Trả về bản dịch
-        }
-        
-        throw new Error('Không nhận được bản dịch');
-        
-    } catch (error) {
-        console.error('Lỗi LibreTranslate:', error);
-        throw new Error('LibreTranslate: ' + error.message);
     }
-}
 
     // PHƯƠNG THỨC CHÍNH ĐỂ DỊCH
     async translate(text, targetLang) {
@@ -87,8 +64,8 @@ async libreTranslate(text, targetLang) {
             
             if (this.currentMethod === 'google-free') {
                 result = await this.googleFreeTranslate(text, targetLang);
-            } else if (this.currentMethod === 'libre') {
-                result = await this.libreTranslate(text, targetLang);
+            } else if (this.currentMethod === 'vitalets') {
+                result = await this.vitaletsTranslate(text, targetLang);
             }
             
             this.isTranslating = false;
@@ -99,9 +76,9 @@ async libreTranslate(text, targetLang) {
             
             // Tự động chuyển phương thức nếu có lỗi
             if (this.currentMethod === 'google-free') {
-                console.log('Tự động chuyển sang LibreTranslate...');
-                this.currentMethod = 'libre';
-                return await this.libreTranslate(text, targetLang);
+                console.log('Tự động chuyển sang @vitalets...');
+                this.currentMethod = 'vitalets';
+                return await this.vitaletsTranslate(text, targetLang);
             }
             
             throw error;
@@ -123,7 +100,6 @@ class TranslationApp {
     }
 
     init() {
-        // LẤY CÁC PHẦN TỬ HTML
         this.elements = {
             inputText: document.getElementById('inputText'),
             outputText: document.getElementById('outputText'),
@@ -134,7 +110,6 @@ class TranslationApp {
             status: document.getElementById('status')
         };
 
-        // GÁN SỰ KIỆN
         this.bindEvents();
         this.updateStatus('🟢 Sẵn sàng dịch văn bản');
         
@@ -142,25 +117,21 @@ class TranslationApp {
     }
 
     bindEvents() {
-        // Sự kiện nhập liệu - dịch tự động sau 1 giây
         this.elements.inputText.addEventListener('input', () => {
             this.updateCharCount();
             this.debouncedTranslate();
         });
 
-        // Sự kiện click nút dịch
         this.elements.translateBtn.addEventListener('click', () => {
             this.handleTranslation();
         });
 
-        // Sự kiện thay đổi ngôn ngữ
         this.elements.targetLanguage.addEventListener('change', () => {
             if (this.elements.inputText.value.trim()) {
                 this.handleTranslation();
             }
         });
 
-        // Sự kiện thay đổi phương thức
         this.elements.translationMethod.addEventListener('change', (e) => {
             this.translator.setMethod(e.target.value);
             if (this.elements.inputText.value.trim()) {
@@ -169,7 +140,6 @@ class TranslationApp {
         });
     }
 
-    // CẬP NHẬT SỐ KÝ TỰ
     updateCharCount() {
         const count = this.elements.inputText.value.length;
         this.elements.charCount.textContent = count;
@@ -183,7 +153,6 @@ class TranslationApp {
         }
     }
 
-    // CẬP NHẬT TRẠNG THÁI
     updateStatus(message) {
         this.elements.status.textContent = message;
         
@@ -198,20 +167,16 @@ class TranslationApp {
         }
     }
 
-    // HÀM DEBOUNCE - CHỜ NGƯỜI DÙNG NGỪNG GÕ
     debouncedTranslate() {
-        // Xóa timeout cũ
         if (this.timeoutId) {
             clearTimeout(this.timeoutId);
         }
         
-        // Tạo timeout mới - chờ 1 giây sau khi ngừng gõ
         this.timeoutId = setTimeout(() => {
             this.handleTranslation();
         }, 1000);
     }
 
-    // HÀM DỊCH CHÍNH
     async handleTranslation() {
         const text = this.elements.inputText.value.trim();
         const targetLang = this.elements.targetLanguage.value;
@@ -222,15 +187,11 @@ class TranslationApp {
             return;
         }
 
-        // Hiển thị trạng thái đang dịch
         this.updateStatus('🔄 Đang dịch...');
         this.elements.outputText.value = '🔄 Đang xử lý...';
         
         try {
-            // Gọi dịch vụ dịch
             const translatedText = await this.translator.translate(text, targetLang);
-            
-            // Hiển thị kết quả
             this.elements.outputText.value = translatedText;
             this.updateStatus(`✅ Đã dịch thành công (${this.translator.currentMethod})`);
             
@@ -251,10 +212,8 @@ class TranslationApp {
 
 // KHỞI CHẠY ỨNG DỤNG KHI TRANG ĐƯỢC TẢI
 document.addEventListener('DOMContentLoaded', function() {
-    // Tạo ứng dụng
     window.translationApp = new TranslationApp();
     
-    // Hiển thị thông báo chào mừng
     console.log(`
     🌐 ỨNG DỤNG DỊCH THUẬT MIỄN PHÍ
     ===============================
@@ -283,6 +242,3 @@ window.addEventListener('offline', function() {
         window.translationApp.updateStatus('❌ Mất kết nối internet');
     }
 });
-
-
-
