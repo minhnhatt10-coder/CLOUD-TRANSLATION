@@ -61,6 +61,20 @@ h1 {
     gap: 12px;
 }
 
+.translate-button:disabled {
+    background: #e0e0e0;
+    color: #999;
+    cursor: not-allowed;
+}
+
+select:hover {
+    border-color: #667eea;
+}
+
+textarea:hover {
+    box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+}
+
 label {
     font-weight: 600;
     color: #444;
@@ -220,3 +234,4 @@ footer {
         min-width: auto;
     }
 }
+
