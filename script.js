@@ -1,57 +1,34 @@
-// LỚP DỊCH VỤ CHÍNH - HOÀN TOÀN MIỄN PHÍ
 class FreeTranslationService {
-    constructor() {
-        this.currentMethod = 'google-free';
+    constructor(apiKey) {
+        this.apiKey = apiKey; // Thêm khóa API
+        this.currentMethod = 'google-cloud';
         this.isTranslating = false;
     }
 
-    // PHƯƠNG THỨC 1: Google Translate Free
-    async googleFreeTranslate(text, targetLang) {
+    // PHƯƠNG THỨC SỬ DỤNG Google Cloud Translation API
+    async googleCloudTranslate(text, targetLang) {
         try {
-            const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=vi&tl=${targetLang}&dt=t&q=${encodeURIComponent(text)}`;
-            const response = await fetch(url);
-            
-            if (!response.ok) {
-                throw new Error(`Lỗi kết nối: ${response.status}`);
-            }
-            
-            const data = await response.json();
-            let translatedText = '';
-            data[0].forEach(item => {
-                if (item[0]) {
-                    translatedText += item[0];
-                }
-            });
-            return translatedText;
-        } catch (error) {
-            throw new Error('Google Free: ' + error.message);
-        }
-    }
-
-    // PHƯƠNG THỨC 2: LibreTranslate
-    async libreTranslate(text, targetLang) {
-        try {
-            const response = await fetch('https://libretranslate.de/translate', {
+            const url = `https://translation.googleapis.com/language/translate/v2?key=${this.apiKey}`;
+            const response = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
                     q: text,
-                    source: 'vi',
                     target: targetLang,
-                    format: 'text'
+                    source: 'vi'
                 })
             });
 
             if (!response.ok) {
-                throw new Error(`Lỗi server: ${response.status}`);
+                throw new Error(`Lỗi kết nối: ${response.status}`);
             }
-            
+
             const data = await response.json();
-            return data.translatedText;
+            return data.data.translations[0].translatedText;
         } catch (error) {
-            throw new Error('LibreTranslate: ' + error.message);
+            throw new Error('Google Cloud: ' + error.message);
         }
     }
 
@@ -59,24 +36,18 @@ class FreeTranslationService {
     async translate(text, targetLang) {
         if (this.isTranslating) return '';
         if (!text.trim()) return '';
-        
+
         this.isTranslating = true;
 
         try {
             let result;
-            if (this.currentMethod === 'google-free') {
-                result = await this.googleFreeTranslate(text, targetLang);
-            } else if (this.currentMethod === 'libre') {
-                result = await this.libreTranslate(text, targetLang);
+            if (this.currentMethod === 'google-cloud') {
+                result = await this.googleCloudTranslate(text, targetLang);
             }
             this.isTranslating = false;
             return result;
         } catch (error) {
             this.isTranslating = false;
-            if (this.currentMethod === 'google-free') {
-                this.currentMethod = 'libre';
-                return await this.libreTranslate(text, targetLang);
-            }
             throw error;
         }
     }
@@ -88,8 +59,8 @@ class FreeTranslationService {
 
 // KHỞI TẠO ỨNG DỤNG
 class TranslationApp {
-    constructor() {
-        this.translator = new FreeTranslationService();
+    constructor(apiKey) {
+        this.translator = new FreeTranslationService(apiKey); // Truyền khóa API vào lớp
         this.timeoutId = null;
         this.init();
     }
@@ -149,5 +120,6 @@ class TranslationApp {
 
 // KHỞI CHẠY ỨNG DỤNG KHI TRANG ĐƯỢC TẢI
 document.addEventListener('DOMContentLoaded', function() {
-    window.translationApp = new TranslationApp();
+    const apiKey = 'AIzaSyAztG6ad9J9F26B0gm8a3TjduHvpZcmzHo'; // Thay thế bằng khóa API của bạn
+    window.translationApp = new TranslationApp(apiKey);
 });
