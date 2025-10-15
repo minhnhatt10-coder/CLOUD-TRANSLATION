@@ -39,41 +39,41 @@ class FreeTranslationService {
         }
     }
 
-    // PHƯƠNG THỨC 2: LibreTranslate (dự phòng)
-    async libreTranslate(text, targetLang) {
-        try {
-            console.log(`Đang dịch với LibreTranslate: "${text}" sang ${targetLang}`);
-            
-            const response = await fetch('https://libretranslate.com/translate', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    q: text,
-                    source: 'vi',
-                    target: targetLang,
-                    format: 'text'
-                })
-            });
-            
-            if (!response.ok) {
-                throw new Error(`Lỗi server: ${response.status}`);
-            }
-            
-            const data = await response.json();
-            
-            if (data && data.translatedText) {
-                return data.translatedText;
-            }
-            
-            throw new Error('Không nhận được bản dịch');
-            
-        } catch (error) {
-            console.error('Lỗi LibreTranslate:', error);
-            throw new Error('LibreTranslate: ' + error.message);
+   // PHƯƠNG THỨC 2: LibreTranslate (dự phòng)
+async libreTranslate(text, targetLang) {
+    try {
+        console.log(`Đang dịch với LibreTranslate: "${text}" sang ${targetLang}`);
+        
+        const response = await fetch('https://libretranslate.com/translate', {
+            method: 'POST', // Đảm bảo sử dụng phương thức POST
+            headers: {
+                'Content-Type': 'application/json', // Đặt tiêu đề đúng
+            },
+            body: JSON.stringify({
+                q: text, // Văn bản cần dịch
+                source: 'vi', // Ngôn ngữ nguồn
+                target: targetLang, // Ngôn ngữ đích
+                format: 'text' // Định dạng
+            })
+        });
+        
+        if (!response.ok) {
+            throw new Error(`Lỗi server: ${response.status}`);
         }
+        
+        const data = await response.json();
+        
+        if (data && data.translatedText) {
+            return data.translatedText; // Trả về bản dịch
+        }
+        
+        throw new Error('Không nhận được bản dịch');
+        
+    } catch (error) {
+        console.error('Lỗi LibreTranslate:', error);
+        throw new Error('LibreTranslate: ' + error.message);
     }
+}
 
     // PHƯƠNG THỨC CHÍNH ĐỂ DỊCH
     async translate(text, targetLang) {
@@ -283,4 +283,5 @@ window.addEventListener('offline', function() {
         window.translationApp.updateStatus('❌ Mất kết nối internet');
     }
 });
+
 
