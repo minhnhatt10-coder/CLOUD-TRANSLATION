@@ -44,7 +44,7 @@ class FreeTranslationService {
         try {
             console.log(`Đang dịch với LibreTranslate: "${text}" sang ${targetLang}`);
             
-            const response = await fetch('https://libretranslate.com', {
+            const response = await fetch('https://libretranslate.com/translate', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -283,3 +283,4 @@ window.addEventListener('offline', function() {
         window.translationApp.updateStatus('❌ Mất kết nối internet');
     }
 });
+
