@@ -133,10 +133,6 @@ select {
     transition: border-color 0.3s;
 }
 
-select:hover {
-    border-color: #667eea;
-}
-
 select:focus {
     outline: none;
     border-color: #667eea;
@@ -163,12 +159,6 @@ select:focus {
 
 .translate-button:active {
     transform: translateY(0);
-}
-
-.translate-button:disabled {
-    background: #e0e0e0;
-    color: #999;
-    cursor: not-allowed;
 }
 
 /* Phần tính năng */
@@ -216,16 +206,16 @@ footer {
         padding: 20px;
         margin: 10px;
     }
-
+    
     h1 {
         font-size: 1.8em;
     }
-
+    
     .controls {
         flex-direction: column;
         align-items: stretch;
     }
-
+    
     .language-selector, .method-selector {
         min-width: auto;
     }
