@@ -44,7 +44,7 @@ async libreTranslate(text, targetLang) {
     try {
         console.log(`Đang dịch với LibreTranslate: "${text}" sang ${targetLang}`);
         
-        const response = await fetch('https://libretranslate.com/translate', {
+        const response = await fetch('https://libretranslate.com', {
             method: 'POST', // Đảm bảo sử dụng phương thức POST
             headers: {
                 'Content-Type': 'application/json', // Đặt tiêu đề đúng
@@ -283,5 +283,6 @@ window.addEventListener('offline', function() {
         window.translationApp.updateStatus('❌ Mất kết nối internet');
     }
 });
+
 
 
