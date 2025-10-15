@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dịch Văn Bản Đa Ngôn Ngữ - 100% Free</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌐 DỊCH VĂN BẢN ĐA NGÔN NGỮ</h1>
+            <p class="subtitle">Đề tài 5 - Hoàn toàn miễn phí - Không cần đăng ký</p>
+        </header>
+
+        <div class="translation-box">
+            <!-- Phần nhập văn bản -->
+            <div class="input-section">
+                <label for="inputText">📝 Văn bản gốc (Tiếng Việt):</label>
+                <textarea 
+                    id="inputText" 
+                    placeholder="Nhập văn bản tiếng Việt cần dịch..."
+                    rows="5"
+                ></textarea>
+                <div class="char-count">
+                    <span id="charCount">0</span> ký tự
+                </div>
+            </div>
+
+            <!-- Phần điều khiển -->
+            <div class="controls">
+                <div class="language-selector">
+                    <label for="targetLanguage">🎯 Ngôn ngữ đích:</label>
+                    <select id="targetLanguage">
+                        <option value="en">🇺🇸 Tiếng Anh</option>
+                        <option value="fr">🇫🇷 Tiếng Pháp</option>
+                        <option value="ja">🇯🇵 Tiếng Nhật</option>
+                        <option value="ko">🇰🇷 Tiếng Hàn</option>
+                        <option value="zh">🇨🇳 Tiếng Trung</option>
+                        <option value="de">🇩🇪 Tiếng Đức</option>
+                        <option value="es">🇪🇸 Tiếng Tây Ban Nha</option>
+                    </select>
+                </div>
+
+                <div class="method-selector">
+                    <label for="translationMethod">⚙️ Phương thức dịch:</label>
+                    <select id="translationMethod">
+                        <option value="google-free">Google Free</option>
+                        <option value="libre">LibreTranslate</option>
+                    </select>
+                </div>
+
+                <button id="translateBtn" class="translate-button">
+                    🔄 Dịch Ngay
+                </button>
+            </div>
+
+            <!-- Phần kết quả -->
+            <div class="output-section">
+                <label for="outputText">📄 Bản dịch:</label>
+                <textarea 
+                    id="outputText" 
+                    readonly 
+                    placeholder="Bản dịch sẽ hiển thị ở đây..."
+                    rows="5"
+                ></textarea>
+                <div class="status" id="status">Sẵn sàng</div>
+            </div>
+        </div>
+
+        <div class="features">
+            <h3>✨ Tính năng nổi bật:</h3>
+            <ul>
+                <li>✅ Dịch tự động khi nhập</li>
+                <li>✅ Hỗ trợ đa ngôn ngữ</li>
+                <li>✅ Hoàn toàn miễn phí</li>
+                <li>✅ Không cần đăng ký</li>
+                <li>✅ Đếm ký tự</li>
+            </ul>
+        </div>
+
+        <footer>
+            <p>💡 <strong>Đề tài 5:</strong> Dịch văn bản đa ngôn ngữ - Phiên bản Free</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
