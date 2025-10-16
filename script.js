@@ -47,29 +47,73 @@ class FreeTranslationService {
 
   // PHƯƠNG THỨC PHÁT HIỆN NGÔN NGỮ
   async detectLanguage(text) {
+    // IMPORTANT: Do NOT keep API keys hard-coded in public repos or client-side code.
+    // Move the key to a backend or use a secure method. Replace the placeholder below if you insist on running client-side.
+    const DETECTLANG_API_KEY = 'a1fec154397f915a5fd9acbc0dc166c6';
+
+    // Try the DetectLanguage API first
+    if (DETECTLANG_API_KEY && DETECTLANG_API_KEY !== 'a1fec154397f915a5fd9acbc0dc166c6') {
+      try {
+        const response = await fetch('https://ws.detectlanguage.com/v3/detect', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            // DetectLanguage expects "Bearer <key>"
+            'Authorization': `Bearer ${DETECTLANG_API_KEY}`
+          },
+          body: JSON.stringify({ q: text })
+        });
+
+        if (!response.ok) {
+          throw new Error(`DetectLanguage API error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        // According to DetectLanguage v3 response: data.data.detections is an array of arrays
+        // e.g., { data: { detections: [ [ { language: "en", confidence: 0.9 } ] ] } }
+        if (data && data.data && Array.isArray(data.data.detections) && data.data.detections[0] && data.data.detections[0][0]) {
+          const detection = data.data.detections[0][0];
+          return detection.language; // return language code string like "en"
+        }
+
+        throw new Error('Không nhận được dữ liệu phát hiện ngôn ngữ từ DetectLanguage');
+
+      } catch (error) {
+        console.warn('DetectLanguage API failed, falling back to Google-free detection. Error:', error);
+        // fall through to google-free fallback
+      }
+    } else {
+      console.warn('DetectLanguage API key missing or left as placeholder. Falling back to Google-free detection.');
+    }
+
+    // Fallback: use Google Free translate endpoint with sl=auto to infer source language
     try {
-      const response = await fetch('https://ws.detectlanguage.com/v3/detect', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'a1fec154397f915a5fd9acbc0dc166c6' // Replace with your actual API key
-        },
-        body: JSON.stringify({ q: text })
-      });
+      const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=en&dt=t&q=${encodeURIComponent(text)}`;
+      const response = await fetch(url);
 
       if (!response.ok) {
-        throw new Error('Không thể phát hiện ngôn ngữ');
+        throw new Error(`Google detect fallback error: ${response.status}`);
       }
 
       const data = await response.json();
-      const detection = data.data.detections[0]; // Get the first detection
-      return {
-        language: detection.language, // Detected language
-        score: detection.score // Detection score
-      };
+      // Many google-free responses include detected source language in data[2] (string),
+      // but formats vary, so we try a few possibilities.
+      if (data && typeof data[2] === 'string') {
+        return data[2];
+      }
+
+      // Some responses include detection in data[0] meta or other places; attempt to parse common shapes:
+      if (Array.isArray(data) && data.length >= 3 && typeof data[2] === 'string') {
+        return data[2];
+      }
+
+      // If unable to detect, default to 'auto' so your translate method can handle it
+      return 'auto';
+
     } catch (error) {
-      console.error('Lỗi phát hiện ngôn ngữ:', error);
-      throw new Error('Phát hiện ngôn ngữ: ' + error.message);
+      console.error('Fallback detectLanguage failed:', error);
+      // As last resort, return 'auto' so translator can try to detect server-side or fail gracefully
+      return 'auto';
     }
   }
 
@@ -111,7 +155,7 @@ class TranslationApp {
   constructor() {
     this.translator = new FreeTranslationService();
     this.timeoutId = null;
-    this.MAX_CHARS = 5000; // <-- Giới hạn ký tự ở đây
+    this.MAX_CHARS = 5000; // <-- Giới hạn kí tự ở đây
     this.init();
   }
 
@@ -153,7 +197,7 @@ class TranslationApp {
       // Nếu vượt giới hạn (trường hợp trình duyệt không honor maxlength), tự cắt
       if (this.elements.inputText.value.length > this.MAX_CHARS) {
         this.elements.inputText.value = this.elements.inputText.value.slice(0, this.MAX_CHARS);
-        this.updateStatus(`❌ Đã đạt giới hạn ${this.MAX_CHARS} ký tự`);
+        this.updateStatus(`❌ Đã đạt giới hạn ${this.MAX_CHARS} kí tự`);
         this.updateCharCount();
         return; // không auto dịch nếu vừa bị cắt
       }
@@ -173,7 +217,7 @@ class TranslationApp {
         const newValue = current.slice(0, selectionStart) + toInsert + current.slice(selectionEnd);
         this.elements.inputText.value = newValue;
         this.updateCharCount();
-        this.updateStatus(`❌ Nội dung đã cắt để phù hợp giới hạn ${this.MAX_CHARS} ký tự`);
+        this.updateStatus(`❌ Nội dung đã cắt để phù hợp giới hạn ${this.MAX_CHARS} kí tự`);
         this.debouncedTranslate();
       }
     });
@@ -248,7 +292,7 @@ class TranslationApp {
 
   updateCharCount() {
     const count = this.elements.inputText.value.length;
-    this.elements.charCount.textContent = `${count}/${this.MAX_CHARS} kí tự`;
+    this.elements.charCount.textContent = `${count}/${this.MAX_CHARS}`;
 
     // Màu sắc cảnh báo theo tỷ lệ
     if (count >= this.MAX_CHARS) {
@@ -303,7 +347,7 @@ class TranslationApp {
       text = text.slice(0, this.MAX_CHARS);
       this.elements.inputText.value = text; // cập nhật lại textarea
       this.updateCharCount();
-      this.updateStatus(`❌ Văn bản vượt quá giới hạn, đã tự cắt từ ${before} xuống ${this.MAX_CHARS} ký tự`);
+      this.updateStatus(`❌ Văn bản vượt quá giới hạn, đã tự cắt từ ${before} xuống ${this.MAX_CHARS} kí tự`);
       // không return; tiếp tục thực hiện dịch với text đã cắt
     }
 
@@ -398,3 +442,4 @@ window.addEventListener('offline', function() {
     window.translationApp.updateStatus('❌ Mất kết nối internet');
   }
 });
+
