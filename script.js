@@ -267,6 +267,8 @@ toggleSourceLanguageVisibility(isChecked) {
   async handleTranslation() {
     const text = this.elements.inputText.value.trim();
     const detectLangCheckbox = document.getElementById('detectLang');
+    const detectedLangText = document.getElementById('detectedLangText');
+    const detectedLanguageDiv = document.getElementById('detectedLanguage');
 
     if (!text) {
         this.elements.outputText.value = '';
@@ -282,12 +284,16 @@ toggleSourceLanguageVisibility(isChecked) {
         try {
             sourceLang = await this.translator.detectLanguage(text);
             this.elements.sourceLanguage.value = sourceLang; // Cập nhật ngôn ngữ gốc
+            detectedLangText.textContent = sourceLang; // Hiển thị ngôn ngữ được phát hiện
+            detectedLanguageDiv.style.display = 'block'; // Hiện phần ngôn ngữ được phát hiện
             this.updateStatus(`🔄 Đã phát hiện ngôn ngữ: ${sourceLang}`);
         } catch (error) {
             console.error('Lỗi phát hiện ngôn ngữ:', error);
             this.elements.outputText.value = '❌ Lỗi phát hiện ngôn ngữ: ' + error.message;
             return;
         }
+    } else {
+        detectedLanguageDiv.style.display = 'none'; // Ẩn phần ngôn ngữ được phát hiện nếu không chọn
     }
 
     const targetLang = this.elements.targetLanguage.value;
@@ -347,6 +353,7 @@ window.addEventListener('offline', function() {
         window.translationApp.updateStatus('❌ Mất kết nối internet');
     }
 });
+
 
 
 
