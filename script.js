@@ -149,6 +149,7 @@ class TranslationApp {
 
         this.elements.sourceLanguage.addEventListener('change', () => {
             //this.updateTargetLanguage(); // Gọi hàm khi thay đổi ngôn ngữ gốc
+            this.updateSourceLanguage();
             this.updateTargetLanguageOptions();
             if (this.elements.inputText.value.trim()) {
                 this.handleTranslation();
@@ -296,6 +297,7 @@ window.addEventListener('offline', function() {
         window.translationApp.updateStatus('❌ Mất kết nối internet');
     }
 });
+
 
 
 
