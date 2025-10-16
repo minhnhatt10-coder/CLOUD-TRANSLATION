@@ -66,7 +66,7 @@ class FreeTranslationService {
     // PHƯƠNG THỨC PHÁT HIỆN NGÔN NGỮ
     async detectLanguage(text) {
         try {
-            const response = await fetch('https://api.detectlanguage.com/v2.0/detect', {
+            const response = await fetch('https://api.detectlanguage.com/private', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -348,5 +348,6 @@ window.addEventListener('offline', function() {
         window.translationApp.updateStatus('❌ Mất kết nối internet');
     }
 });
+
 
 
