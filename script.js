@@ -164,9 +164,15 @@ class TranslationApp {
     document.getElementById('detectLang').addEventListener('change', (e) => {
         this.toggleSourceLanguageVisibility(e.target.checked);
     });
+
+      // Thêm sự kiện cho checkbox phát hiện ngôn ngữ
+    document.getElementById('detectLang').addEventListener('change', (e) => {
+        this.toggleSourceLanguageVisibility(e.target.checked);
+    });
 }
 
 toggleSourceLanguageVisibility(isChecked) {
+    console.log(`Checkbox phát hiện ngôn ngữ được bật: ${isChecked}`);
     const sourceLangSelect = document.getElementById('sourceLanguage');
     if (isChecked) {
         sourceLangSelect.style.display = 'none'; // Ẩn ngôn ngữ gốc
@@ -341,6 +347,7 @@ window.addEventListener('offline', function() {
         window.translationApp.updateStatus('❌ Mất kết nối internet');
     }
 });
+
 
 
 
