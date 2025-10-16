@@ -90,7 +90,7 @@ async detectLanguage(text) {
         throw new Error('Phát hiện ngôn ngữ: ' + error.message);
     }
 }
-}
+
 
     // PHƯƠNG THỨC CHÍNH ĐỂ DỊCH
     async translate(text, sourceLang, targetLang) {
@@ -353,6 +353,7 @@ window.addEventListener('offline', function() {
         window.translationApp.updateStatus('❌ Mất kết nối internet');
     }
 });
+
 
 
 
