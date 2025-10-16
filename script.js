@@ -64,28 +64,37 @@ class FreeTranslationService {
     }
 
     // PHƯƠNG THỨC PHÁT HIỆN NGÔN NGỮ
-    async detectLanguage(text) {
-        try {
-            const response = await fetch('https://api.detectlanguage.com/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'a1fec154397f915a5fd9acbc0dc166c6' // Thay thế bằng API key của bạn
-                },
-                body: JSON.stringify({ q: text })
-            });
+  async detectLanguage(text) {
+    try {
+        const projectNumber = '385735802185'; // Your project number
+        const response = await fetch(`https://translation.googleapis.com/language/translate/v2/detect?key=${projectNumber}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ q: text })
+        });
 
-            if (!response.ok) {
-                throw new Error('Không thể phát hiện ngôn ngữ');
-            }
-
-            const data = await response.json();
-            return data.data.detections[0].language; // Trả về ngôn ngữ được phát hiện
-        } catch (error) {
-            console.error('Lỗi phát hiện ngôn ngữ:', error);
-            throw new Error('Phát hiện ngôn ngữ: ' + error.message);
+        if (!response.ok) {
+            throw new Error('Không thể phát hiện ngôn ngữ');
         }
+
+        const data = await response.json();
+        
+        // Extracting the detected languages
+        const detections = data.data.detections;
+        const detectedLanguages = detections.map(detection => ({
+            language: detection.language,
+            confidence: detection.confidence,
+            isReliable: detection.isReliable
+        }));
+
+        return detectedLanguages; // Returning all detected languages
+    } catch (error) {
+        console.error('Lỗi phát hiện ngôn ngữ:', error);
+        throw new Error('Phát hiện ngôn ngữ: ' + error.message);
     }
+}
 
     // PHƯƠNG THỨC CHÍNH ĐỂ DỊCH
     async translate(text, sourceLang, targetLang) {
@@ -348,6 +357,7 @@ window.addEventListener('offline', function() {
         window.translationApp.updateStatus('❌ Mất kết nối internet');
     }
 });
+
 
 
 
