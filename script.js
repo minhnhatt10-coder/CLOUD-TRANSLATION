@@ -6,65 +6,65 @@ class FreeTranslationService {
     }
 
     // PHƯƠNG THỨC 1: Google Translate Free (ổn định nhất)
-   async googleFreeTranslate(text, sourceLang, targetLang) {
-    try {
-        console.log(`Đang dịch với Google Free: "${text}" từ ${sourceLang} sang ${targetLang}`);
-        
-        const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&q=${encodeURIComponent(text)}`;
-        
-        const response = await fetch(url);
-        
-        if (!response.ok) {
-            throw new Error(`Lỗi kết nối: ${response.status}`);
+    async googleFreeTranslate(text, sourceLang, targetLang) {
+        try {
+            console.log(`Đang dịch với Google Free: "${text}" từ ${sourceLang} sang ${targetLang}`);
+            
+            const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&q=${encodeURIComponent(text)}`;
+            
+            const response = await fetch(url);
+            
+            if (!response.ok) {
+                throw new Error(`Lỗi kết nối: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            
+            if (data && data[0]) {
+                let translatedText = '';
+                data[0].forEach(item => {
+                    if (item[0]) {
+                        translatedText += item[0];
+                    }
+                });
+                return translatedText;
+            }
+            
+            throw new Error('Không nhận được dữ liệu dịch');
+            
+        } catch (error) {
+            console.error('Lỗi Google Free:', error);
+            throw new Error('Google Free: ' + error.message);
         }
-        
-        const data = await response.json();
-        
-        if (data && data[0]) {
-            let translatedText = '';
-            data[0].forEach(item => {
-                if (item[0]) {
-                    translatedText += item[0];
-                }
-            });
-            return translatedText;
-        }
-        
-        throw new Error('Không nhận được dữ liệu dịch');
-        
-    } catch (error) {
-        console.error('Lỗi Google Free:', error);
-        throw new Error('Google Free: ' + error.message);
     }
-}
 
-        // PHƯƠNG THỨC 2: MyMemory API
-async myMemoryTranslate(text, sourceLang, targetLang) {
-    try {
-        console.log(`Đang dịch với MyMemory: "${text}" từ ${sourceLang} sang ${targetLang}`);
-        const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${sourceLang}|${targetLang}`;
-        const response = await fetch(url);
-        
-        if (!response.ok) {
-            throw new Error(`Lỗi server: ${response.status}`);
+    // PHƯƠNG THỨC 2: MyMemory API
+    async myMemoryTranslate(text, sourceLang, targetLang) {
+        try {
+            console.log(`Đang dịch với MyMemory: "${text}" từ ${sourceLang} sang ${targetLang}`);
+            const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${sourceLang}|${targetLang}`;
+            const response = await fetch(url);
+            
+            if (!response.ok) {
+                throw new Error(`Lỗi server: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            
+            if (data && data.responseData && data.responseData.translatedText) {
+                return data.responseData.translatedText; // Trả về bản dịch
+            }
+            
+            throw new Error('Không nhận được bản dịch');
+            
+        } catch (error) {
+            console.error('Lỗi MyMemory:', error);
+            throw new Error('MyMemory: ' + error.message);
         }
-        
-        const data = await response.json();
-        
-        if (data && data.responseData && data.responseData.translatedText) {
-            return data.responseData.translatedText; // Trả về bản dịch
-        }
-        
-        throw new Error('Không nhận được bản dịch');
-        
-    } catch (error) {
-        console.error('Lỗi MyMemory:', error);
-        throw new Error('MyMemory: ' + error.message);
     }
-}
 
     // PHƯƠNG THỨC CHÍNH ĐỂ DỊCH
-    async translate(text, targetLang) {
+    async translate(text, sourceLang, targetLang) {
         if (this.isTranslating) return '';
         if (!text.trim()) return '';
         
@@ -74,9 +74,9 @@ async myMemoryTranslate(text, sourceLang, targetLang) {
             let result;
             
             if (this.currentMethod === 'google-free') {
-                result = await this.googleFreeTranslate(text, targetLang);
+                result = await this.googleFreeTranslate(text, sourceLang, targetLang);
             } else if (this.currentMethod === 'mymemory') {
-                result = await this.myMemoryTranslate(text, targetLang);
+                result = await this.myMemoryTranslate(text, sourceLang, targetLang);
             }
             
             this.isTranslating = false;
@@ -89,7 +89,7 @@ async myMemoryTranslate(text, sourceLang, targetLang) {
             if (this.currentMethod === 'google-free') {
                 console.log('Tự động chuyển sang MyMemory...');
                 this.currentMethod = 'mymemory';
-                return await this.myMemoryTranslate(text, targetLang);
+                return await this.myMemoryTranslate(text, sourceLang, targetLang);
             }
             
             throw error;
@@ -230,6 +230,7 @@ class TranslationApp {
 
     async handleTranslation() {
         const text = this.elements.inputText.value.trim();
+        const sourceLang = this.elements.sourceLanguage.value;
         const targetLang = this.elements.targetLanguage.value;
         
         if (!text) {
@@ -242,7 +243,7 @@ class TranslationApp {
         this.elements.outputText.value = '🔄 Đang xử lý...';
         
         try {
-            const translatedText = await this.translator.translate(text, targetLang);
+            const translatedText = await this.translator.translate(text, sourceLang, targetLang);
             this.elements.outputText.value = translatedText;
             this.updateStatus(`✅ Đã dịch thành công (${this.translator.currentMethod})`);
             
@@ -293,6 +294,3 @@ window.addEventListener('offline', function() {
         window.translationApp.updateStatus('❌ Mất kết nối internet');
     }
 });
-
-
-
