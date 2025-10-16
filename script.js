@@ -186,6 +186,7 @@ class TranslationApp {
         }
           if (optionz_zero_sourceLang.options[0].value === targetLang) {
             TargetL.value = TargetL.options[0].value;
+            sourceLangSelect.value = sourceLangSelect.options[0].value;
              this.updateStatus(`❌ Trùng ngôn ngữ (${this.translator.currentMethod})`);
         }
     }
@@ -204,6 +205,7 @@ class TranslationApp {
         }
         if (optionz_zero_sourceLang.options[0].value === targetLang) {
             TargetL.value = TargetL.options[0].value;
+            sourceLangSelect.value = sourceLangSelect.options[0].value;
              this.updateStatus(`❌ Trùng ngôn ngữ (${this.translator.currentMethod})`);
         }
     }
@@ -311,6 +313,7 @@ window.addEventListener('offline', function() {
         window.translationApp.updateStatus('❌ Mất kết nối internet');
     }
 });
+
 
 
 
