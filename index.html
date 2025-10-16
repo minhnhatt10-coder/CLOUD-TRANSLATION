@@ -16,10 +16,10 @@
         <div class="translation-box">
             <!-- Phần nhập văn bản -->
             <div class="input-section">
-                <label for="inputText">📝 Văn bản gốc (Tiếng Việt):</label>
+                <label for="inputText">📝 Văn bản gốc:</label>
                 <textarea 
                     id="inputText" 
-                    placeholder="Nhập văn bản tiếng Việt cần dịch..."
+                    placeholder="Nhập văn bản cần dịch..."
                     rows="5"
                 ></textarea>
                 <div class="char-count">
@@ -27,8 +27,22 @@
                 </div>
             </div>
 
-            <!-- Phần điều khiển -->
+            <!-- Phần chọn ngôn ngữ -->
             <div class="controls">
+                <div class="language-selector">
+                    <label for="sourceLanguage">🌍 Ngôn ngữ gốc:</label>
+                    <select id="sourceLanguage">
+                        <option value="vi">🇻🇳 Tiếng Việt</option>
+                        <option value="en">🇺🇸 Tiếng Anh</option>
+                        <option value="fr">🇫🇷 Tiếng Pháp</option>
+                        <option value="ja">🇯🇵 Tiếng Nhật</option>
+                        <option value="ko">🇰🇷 Tiếng Hàn</option>
+                        <option value="zh">🇨🇳 Tiếng Trung</option>
+                        <option value="de">🇩🇪 Tiếng Đức</option>
+                        <option value="es">🇪🇸 Tiếng Tây Ban Nha</option>
+                    </select>
+                </div>
+
                 <div class="language-selector">
                     <label for="targetLanguage">🎯 Ngôn ngữ đích:</label>
                     <select id="targetLanguage">
@@ -42,13 +56,13 @@
                     </select>
                 </div>
 
-               <div class="method-selector">
-    <label for="translationMethod">⚙️ Phương thức dịch:</label>
-    <select id="translationMethod">
-        <option value="google-free">Google Free</option>
-        <option value="mymemory">MyMemory</option> <!-- Đã thay đổi ở đây -->
-    </select>
-</div>
+                <div class="method-selector">
+                    <label for="translationMethod">⚙️ Phương thức dịch:</label>
+                    <select id="translationMethod">
+                        <option value="google-free">Google Free</option>
+                        <option value="mymemory">MyMemory</option>
+                    </select>
+                </div>
 
                 <button id="translateBtn" class="translate-button">
                     🔄 Dịch Ngay
@@ -87,4 +101,3 @@
     <script src="script.js"></script>
 </body>
 </html>
-
