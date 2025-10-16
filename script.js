@@ -65,26 +65,30 @@ throw new Error('MyMemory: ' + error.message);
 
 // PHƯƠNG THỨC PHÁT HIỆN NGÔN NGỮ
 async detectLanguage(text) {
-try {
-const response = await fetch('https://ws.detectlanguage.com/v3/detect', {
-method: 'POST',
-headers: {
-'Content-Type': 'application/json',                   
-                    'Authorization': 'a1fec154397f915a5fd9acbc0dc166c6' // Thay thế bằng API key của bạn
-},
-body: JSON.stringify({ q: text })
-});
+    try {
+        const response = await fetch('https://ws.detectlanguage.com/v3/detect', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'a1fec154397f915a5fd9acbc0dc166c6' // Replace with your actual API key
+            },
+            body: JSON.stringify({ q: text })
+        });
 
-if (!response.ok) {
-throw new Error('Không thể phát hiện ngôn ngữ');
-}
+        if (!response.ok) {
+            throw new Error('Không thể phát hiện ngôn ngữ');
+        }
 
-const data = await response.json();
-return data.data.detections[0].language; // Trả về ngôn ngữ được phát hiện
-} catch (error) {
-console.error('Lỗi phát hiện ngôn ngữ:', error);
-throw new Error('Phát hiện ngôn ngữ: ' + error.message);
-}
+        const data = await response.json();
+        const detection = data.data.detections[0]; // Get the first detection
+        return {
+            language: detection.language, // Detected language
+            score: detection.score // Detection score
+        };
+    } catch (error) {
+        console.error('Lỗi phát hiện ngôn ngữ:', error);
+        throw new Error('Phát hiện ngôn ngữ: ' + error.message);
+    }
 }
 
 // PHƯƠNG THỨC CHÍNH ĐỂ DỊCH
@@ -191,13 +195,15 @@ this.toggleSourceLanguageVisibility(e.target.checked);
 }
 
 toggleSourceLanguageVisibility(isChecked) {
-console.log(`Checkbox phát hiện ngôn ngữ được bật: ${isChecked}`);
-const sourceLangSelect = document.getElementById('sourceLanguage');
-if (isChecked) {
-sourceLangSelect.style.display = 'none'; // Ẩn ngôn ngữ gốc
-} else {
-sourceLangSelect.style.display = 'block'; // Hiện lại ngôn ngữ gốc
-}
+    const sourceLangSelect = document.getElementById('sourceLanguage');
+    
+    if (isChecked) {
+        sourceLangSelect.style.display = 'none'; // Ẩn ngôn ngữ gốc
+        sourceLangSelect.disabled = true; // Vô hiệu hóa ngôn ngữ gốc
+    } else {
+        sourceLangSelect.style.display = 'block'; // Hiện lại ngôn ngữ gốc
+        sourceLangSelect.disabled = false; // Kích hoạt lại ngôn ngữ gốc
+    }
 }
 
 updateTargetLanguageOptions() {
@@ -348,3 +354,4 @@ if (window.translationApp) {
 window.translationApp.updateStatus('❌ Mất kết nối internet');
 }
 });
+
