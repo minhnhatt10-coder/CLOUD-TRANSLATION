@@ -129,40 +129,51 @@ class TranslationApp {
         this.updateTargetLanguageOptions(); // Gọi hàm khi khởi động
     }
 
-    bindEvents() {
-        this.elements.inputText.addEventListener('input', () => {
-            this.updateCharCount();
-            this.debouncedTranslate();
-        });
+ bindEvents() {
+    this.elements.inputText.addEventListener('input', () => {
+        this.updateCharCount();
+        this.debouncedTranslate();
+    });
 
-        this.elements.translateBtn.addEventListener('click', () => {
+    this.elements.translateBtn.addEventListener('click', () => {
+        this.handleTranslation();
+    });
+
+    this.elements.targetLanguage.addEventListener('change', () => {
+        this.updateTargetLanguageOptions();
+        if (this.elements.inputText.value.trim()) {
             this.handleTranslation();
-        });
+        }
+    });
 
-        this.elements.targetLanguage.addEventListener('change', () => {
-            //this.updateSourceLanguage(); // Gọi hàm khi thay đổi ngôn ngữ đích
-            this.updateTargetLanguageOptions();
-            if (this.elements.inputText.value.trim()) {
-                this.handleTranslation();
-            }
-        });
+    this.elements.sourceLanguage.addEventListener('change', () => {
+        this.updateSourceLanguage();
+        if (this.elements.inputText.value.trim()) {
+            this.handleTranslation();
+        }
+    });
 
-        this.elements.sourceLanguage.addEventListener('change', () => {
-            //this.updateTargetLanguage(); // Gọi hàm khi thay đổi ngôn ngữ gốc
-            this.updateSourceLanguage();
-          //  this.updateTargetLanguageOptions();
-            if (this.elements.inputText.value.trim()) {
-                this.handleTranslation();
-            }
-        });
+    this.elements.translationMethod.addEventListener('change', (e) => {
+        this.translator.setMethod(e.target.value);
+        if (this.elements.inputText.value.trim()) {
+            this.handleTranslation();
+        }
+    });
 
-        this.elements.translationMethod.addEventListener('change', (e) => {
-            this.translator.setMethod(e.target.value);
-            if (this.elements.inputText.value.trim()) {
-                this.handleTranslation();
-            }
-        });
+    // Thêm sự kiện cho checkbox phát hiện ngôn ngữ
+    document.getElementById('detectLang').addEventListener('change', (e) => {
+        this.toggleSourceLanguageVisibility(e.target.checked);
+    });
+}
+
+toggleSourceLanguageVisibility(isChecked) {
+    const sourceLangSelect = document.getElementById('sourceLanguage');
+    if (isChecked) {
+        sourceLangSelect.style.display = 'none'; // Ẩn ngôn ngữ gốc
+    } else {
+        sourceLangSelect.style.display = 'block'; // Hiện lại ngôn ngữ gốc
     }
+}
 
      updateTargetLanguageOptions() {
         const sourceLang = this.elements.sourceLanguage.value;
@@ -330,6 +341,7 @@ window.addEventListener('offline', function() {
         window.translationApp.updateStatus('❌ Mất kết nối internet');
     }
 });
+
 
 
 
