@@ -29,46 +29,52 @@
 
             <!-- Phần chọn ngôn ngữ -->
             <div class="controls">
-                <div class="language-selector">
-                    <label for="sourceLanguage">🌍 Ngôn ngữ gốc:</label>
-                    <select id="sourceLanguage">
-                        <option value="vi">🇻🇳 Tiếng Việt</option>
-                        <option value="en">🇺🇸 Tiếng Anh</option>
-                        <option value="fr">🇫🇷 Tiếng Pháp</option>
-                        <option value="ja">🇯🇵 Tiếng Nhật</option>
-                        <option value="ko">🇰🇷 Tiếng Hàn</option>
-                        <option value="zh">🇨🇳 Tiếng Trung</option>
-                        <option value="de">🇩🇪 Tiếng Đức</option>
-                        <option value="es">🇪🇸 Tiếng Tây Ban Nha</option>
-                    </select>
-                </div>
+    <div class="language-selector">
+        <label for="sourceLanguage">🌍 Ngôn ngữ gốc:</label>
+        <select id="sourceLanguage">
+            <option value="vi">🇻🇳 Tiếng Việt</option>
+            <option value="en">🇺🇸 Tiếng Anh</option>
+            <option value="fr">🇫🇷 Tiếng Pháp</option>
+            <option value="ja">🇯🇵 Tiếng Nhật</option>
+            <option value="ko">🇰🇷 Tiếng Hàn</option>
+            <option value="zh">🇨🇳 Tiếng Trung</option>
+            <option value="de">🇩🇪 Tiếng Đức</option>
+            <option value="es">🇪🇸 Tiếng Tây Ban Nha</option>
+        </select>
+    </div>
 
-                <div class="language-selector">
-                    <label for="targetLanguage">🎯 Ngôn ngữ đích:</label>
-                    <select id="targetLanguage">
-                        <option value="en">🇺🇸 Tiếng Anh</option>
-                        <option value="en">🇺🇸 Tiếng Việt</option>
-                        <option value="fr">🇫🇷 Tiếng Pháp</option>
-                        <option value="ja">🇯🇵 Tiếng Nhật</option>
-                        <option value="ko">🇰🇷 Tiếng Hàn</option>
-                        <option value="zh">🇨🇳 Tiếng Trung</option>
-                        <option value="de">🇩🇪 Tiếng Đức</option>
-                        <option value="es">🇪🇸 Tiếng Tây Ban Nha</option>
-                    </select>
-                </div>
+    <div class="language-selector">
+        <label>
+            <input type="checkbox" id="detectLang" /> Phát hiện ngôn ngữ
+        </label>
+    </div>
 
-                <div class="method-selector">
-                    <label for="translationMethod">⚙️ Phương thức dịch:</label>
-                    <select id="translationMethod">
-                        <option value="google-free">Google Free</option>
-                        <option value="mymemory">MyMemory</option>
-                    </select>
-                </div>
+    <div class="language-selector">
+        <label for="targetLanguage">🎯 Ngôn ngữ đích:</label>
+        <select id="targetLanguage">
+            <option value="en">🇺🇸 Tiếng Anh</option>
+            <option value="vi">🇻🇳 Tiếng Việt</option>
+            <option value="fr">🇫🇷 Tiếng Pháp</option>
+            <option value="ja">🇯🇵 Tiếng Nhật</option>
+            <option value="ko">🇰🇷 Tiếng Hàn</option>
+            <option value="zh">🇨🇳 Tiếng Trung</option>
+            <option value="de">🇩🇪 Tiếng Đức</option>
+            <option value="es">🇪🇸 Tiếng Tây Ban Nha</option>
+        </select>
+    </div>
 
-                <button id="translateBtn" class="translate-button">
-                    🔄 Dịch Ngay
-                </button>
-            </div>
+    <div class="method-selector">
+        <label for="translationMethod">⚙️ Phương thức dịch:</label>
+        <select id="translationMethod">
+            <option value="google-free">Google Free</option>
+            <option value="mymemory">MyMemory</option>
+        </select>
+    </div>
+
+    <button id="translateBtn" class="translate-button">
+        🔄 Dịch Ngay
+    </button>
+</div>
 
             <!-- Phần kết quả -->
             <div class="output-section">
@@ -102,4 +108,3 @@
     <script src="script.js"></script>
 </body>
 </html>
-
