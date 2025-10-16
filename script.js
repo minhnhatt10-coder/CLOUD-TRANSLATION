@@ -140,7 +140,7 @@ class TranslationApp {
         });
 
         this.elements.targetLanguage.addEventListener('change', () => {
-            this.updateSourceLanguage(); // Gọi hàm khi thay đổi ngôn ngữ đích
+            //this.updateSourceLanguage(); // Gọi hàm khi thay đổi ngôn ngữ đích
             this.updateTargetLanguageOptions();
             if (this.elements.inputText.value.trim()) {
                 this.handleTranslation();
@@ -150,7 +150,7 @@ class TranslationApp {
         this.elements.sourceLanguage.addEventListener('change', () => {
             //this.updateTargetLanguage(); // Gọi hàm khi thay đổi ngôn ngữ gốc
             this.updateSourceLanguage();
-            this.updateTargetLanguageOptions();
+          //  this.updateTargetLanguageOptions();
             if (this.elements.inputText.value.trim()) {
                 this.handleTranslation();
             }
@@ -297,6 +297,7 @@ window.addEventListener('offline', function() {
         window.translationApp.updateStatus('❌ Mất kết nối internet');
     }
 });
+
 
 
 
