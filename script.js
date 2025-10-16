@@ -64,15 +64,16 @@ class FreeTranslationService {
     }
 
     // PHƯƠNG THỨC PHÁT HIỆN NGÔN NGỮ
-  async detectLanguage(text) {
+async detectLanguage(text) {
     try {
-        const projectNumber = '385735802185'; // Your project number
-        const response = await fetch(`https://translation.googleapis.com/language/translate/v2/detect?key=${projectNumber}`, {
+        const apiKey = 'a1fec154397f915a5fd9acbc0dc166c6'; // Replace with your actual API key
+        const response = await fetch('https://ws.detectlanguage.com/v3/detect', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}` // Using Bearer token for authorization
             },
-            body: JSON.stringify({ q: text })
+            body: JSON.stringify({ q: text }) // Sending the text to detect
         });
 
         if (!response.ok) {
@@ -81,19 +82,14 @@ class FreeTranslationService {
 
         const data = await response.json();
         
-        // Extracting the detected languages
-        const detections = data.data.detections;
-        const detectedLanguages = detections.map(detection => ({
-            language: detection.language,
-            confidence: detection.confidence,
-            isReliable: detection.isReliable
-        }));
-
-        return detectedLanguages; // Returning all detected languages
+        // Extracting the detected language
+        const detectedLanguage = data.data.detections[0].language; // Adjust if the structure changes
+        return detectedLanguage; // Return the detected language
     } catch (error) {
         console.error('Lỗi phát hiện ngôn ngữ:', error);
         throw new Error('Phát hiện ngôn ngữ: ' + error.message);
     }
+}
 }
 
     // PHƯƠNG THỨC CHÍNH ĐỂ DỊCH
@@ -357,6 +353,7 @@ window.addEventListener('offline', function() {
         window.translationApp.updateStatus('❌ Mất kết nối internet');
     }
 });
+
 
 
 
