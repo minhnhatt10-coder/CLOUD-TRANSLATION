@@ -42,12 +42,15 @@
             <option value="es">🇪🇸 Tiếng Tây Ban Nha</option>
         </select>
     </div>
-
+                
     <div class="language-selector">
         <label>
             <input type="checkbox" id="detectLang" /> Phát hiện ngôn ngữ
         </label>
     </div>
+                
+    <!-- div hiển thị ngôn ngữ được phát hiện -->
+    <div id="detectedLanguage" style="display:none;">Ngôn ngữ được phát hiện: <span id="detectedLangText"></span></div>
 
     <div class="language-selector">
         <label for="targetLanguage">🎯 Ngôn ngữ đích:</label>
@@ -108,3 +111,4 @@
     <script src="script.js"></script>
 </body>
 </html>
+
