@@ -63,6 +63,30 @@ class FreeTranslationService {
         }
     }
 
+    // PHƯƠNG THỨC PHÁT HIỆN NGÔN NGỮ
+    async detectLanguage(text) {
+        try {
+            const response = await fetch('https://api.detectlanguage.com/v2.0/detect', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer YOUR_API_KEY' // Thay thế bằng API key của bạn
+                },
+                body: JSON.stringify({ q: text })
+            });
+
+            if (!response.ok) {
+                throw new Error('Không thể phát hiện ngôn ngữ');
+            }
+
+            const data = await response.json();
+            return data.data.detections[0].language; // Trả về ngôn ngữ được phát hiện
+        } catch (error) {
+            console.error('Lỗi phát hiện ngôn ngữ:', error);
+            throw new Error('Phát hiện ngôn ngữ: ' + error.message);
+        }
+    }
+
     // PHƯƠNG THỨC CHÍNH ĐỂ DỊCH
     async translate(text, sourceLang, targetLang) {
         if (this.isTranslating) return '';
@@ -129,82 +153,61 @@ class TranslationApp {
         this.updateTargetLanguageOptions(); // Gọi hàm khi khởi động
     }
 
- bindEvents() {
-    this.elements.inputText.addEventListener('input', () => {
-        this.updateCharCount();
-        this.debouncedTranslate();
-    });
+    bindEvents() {
+        this.elements.inputText.addEventListener('input', () => {
+            this.updateCharCount();
+            this.debouncedTranslate();
+        });
 
-    this.elements.translateBtn.addEventListener('click', () => {
-        this.handleTranslation();
-    });
-
-    this.elements.targetLanguage.addEventListener('change', () => {
-        this.updateTargetLanguageOptions();
-        if (this.elements.inputText.value.trim()) {
+        this.elements.translateBtn.addEventListener('click', () => {
             this.handleTranslation();
-        }
-    });
+        });
 
-    this.elements.sourceLanguage.addEventListener('change', () => {
-        this.updateSourceLanguage();
-        if (this.elements.inputText.value.trim()) {
-            this.handleTranslation();
-        }
-    });
+        this.elements.targetLanguage.addEventListener('change', () => {
+            this.updateTargetLanguageOptions();
+            if (this.elements.inputText.value.trim()) {
+                this.handleTranslation();
+            }
+        });
 
-    this.elements.translationMethod.addEventListener('change', (e) => {
-        this.translator.setMethod(e.target.value);
-        if (this.elements.inputText.value.trim()) {
-            this.handleTranslation();
-        }
-    });
+        this.elements.sourceLanguage.addEventListener('change', () => {
+            this.updateSourceLanguage();
+            if (this.elements.inputText.value.trim()) {
+                this.handleTranslation();
+            }
+        });
 
-    // Thêm sự kiện cho checkbox phát hiện ngôn ngữ
-    document.getElementById('detectLang').addEventListener('change', (e) => {
-        this.toggleSourceLanguageVisibility(e.target.checked);
-    });
+        this.elements.translationMethod.addEventListener('change', (e) => {
+            this.translator.setMethod(e.target.value);
+            if (this.elements.inputText.value.trim()) {
+                this.handleTranslation();
+            }
+        });
 
-      // Thêm sự kiện cho checkbox phát hiện ngôn ngữ
-    document.getElementById('detectLang').addEventListener('change', (e) => {
-        this.toggleSourceLanguageVisibility(e.target.checked);
-    });
-}
-
-toggleSourceLanguageVisibility(isChecked) {
-    console.log(`Checkbox phát hiện ngôn ngữ được bật: ${isChecked}`);
-    const sourceLangSelect = document.getElementById('sourceLanguage');
-    if (isChecked) {
-        sourceLangSelect.style.display = 'none'; // Ẩn ngôn ngữ gốc
-    } else {
-        sourceLangSelect.style.display = 'block'; // Hiện lại ngôn ngữ gốc
+        // Thêm sự kiện cho checkbox phát hiện ngôn ngữ
+        document.getElementById('detectLang').addEventListener('change', (e) => {
+            this.toggleSourceLanguageVisibility(e.target.checked);
+        });
     }
-}
 
-     updateTargetLanguageOptions() {
+    toggleSourceLanguageVisibility(isChecked) {
+        console.log(`Checkbox phát hiện ngôn ngữ được bật: ${isChecked}`);
+        const sourceLangSelect = document.getElementById('sourceLanguage');
+        if (isChecked) {
+            sourceLangSelect.style.display = 'none'; // Ẩn ngôn ngữ gốc
+        } else {
+            sourceLangSelect.style.display = 'block'; // Hiện lại ngôn ngữ gốc
+        }
+    }
+
+    updateTargetLanguageOptions() {
         const sourceLang = this.elements.sourceLanguage.value;
         const targetLangSelect = this.elements.targetLanguage;
-
-        const optionz_zero_sourceLang = this.elements.sourceLanguage.value;
-        const TargetL = this.elements.targetLanguage.value;
-         
-        //Array.from(targetLangSelect.options).forEach(option => {
-       //     if (option.value === sourceLang) {
-       //         option.style.display = 'none'; // Ẩn ngôn ngữ giống với ngôn ngữ gốc
-        //    } else {
-       //         option.style.display = 'block'; // Hiện các ngôn ngữ khác
-       //     }
-      //  });
 
         // Đặt lại ngôn ngữ đích nếu nó trùng với ngôn ngữ gốc
         if (targetLangSelect.value === sourceLang) {
             targetLangSelect.value = targetLangSelect.options[0].value; // Chọn ngôn ngữ đầu tiên
-                 this.updateStatus(`❌ Trùng ngôn ngữ (${this.translator.currentMethod})`);
-        }
-       if (optionz_zero_sourceLang === TargetLTargetL.options[1].value) {
-            TargetL.value = TargetL.options[0].value;
-            sourceLangSelect.value = sourceLangSelect.options[0].value;
-             this.updateStatus(`❌ Trùng ngôn ngữ (${this.translator.currentMethod})`);
+            this.updateStatus(`❌ Trùng ngôn ngữ (${this.translator.currentMethod})`);
         }
     }
 
@@ -212,18 +215,10 @@ toggleSourceLanguageVisibility(isChecked) {
         const targetLang = this.elements.targetLanguage.value;
         const sourceLangSelect = this.elements.sourceLanguage;
 
-        const optionz_zero_sourceLang = this.elements.sourceLanguage.value;
-        const TargetL = this.elements.targetLanguage.value;
-            
         // Đặt lại ngôn ngữ gốc nếu nó trùng với ngôn ngữ đích
         if (sourceLangSelect.value === targetLang) {
             sourceLangSelect.value = sourceLangSelect.options[0].value; // Chọn ngôn ngữ đầu tiên
-                this.updateStatus(`❌ Trùng ngôn ngữ (${this.translator.currentMethod})`);
-        }
-        if (optionz_zero_sourceLang === TargetLTargetL.options[1].value) {
-            TargetL.value = TargetL.options[0].value;
-            sourceLangSelect.value = sourceLangSelect.options[0].value;
-             this.updateStatus(`❌ Trùng ngôn ngữ (${this.translator.currentMethod})`);
+            this.updateStatus(`❌ Trùng ngôn ngữ (${this.translator.currentMethod})`);
         }
     }
 
@@ -264,61 +259,61 @@ toggleSourceLanguageVisibility(isChecked) {
         }, 1000);
     }
 
-  async handleTranslation() {
-    const text = this.elements.inputText.value.trim();
-    const detectLangCheckbox = document.getElementById('detectLang');
-    const detectedLangText = document.getElementById('detectedLangText');
-    const detectedLanguageDiv = document.getElementById('detectedLanguage');
+    async handleTranslation() {
+        const text = this.elements.inputText.value.trim();
+        const detectLangCheckbox = document.getElementById('detectLang');
+        const detectedLangText = document.getElementById('detectedLangText');
+        const detectedLanguageDiv = document.getElementById('detectedLanguage');
 
-    if (!text) {
-        this.elements.outputText.value = '';
-        this.updateStatus('🟢 Nhập văn bản để dịch');
-        return;
-    }
-
-    let sourceLang = this.elements.sourceLanguage.value;
-
-    if (detectLangCheckbox.checked) {
-        this.updateStatus('🔄 Đang phát hiện ngôn ngữ...');
-        
-        try {
-            sourceLang = await this.translator.detectLanguage(text);
-            this.elements.sourceLanguage.value = sourceLang; // Cập nhật ngôn ngữ gốc
-            detectedLangText.textContent = sourceLang; // Hiển thị ngôn ngữ được phát hiện
-            detectedLanguageDiv.style.display = 'block'; // Hiện phần ngôn ngữ được phát hiện
-            this.updateStatus(`🔄 Đã phát hiện ngôn ngữ: ${sourceLang}`);
-        } catch (error) {
-            console.error('Lỗi phát hiện ngôn ngữ:', error);
-            this.elements.outputText.value = '❌ Lỗi phát hiện ngôn ngữ: ' + error.message;
+        if (!text) {
+            this.elements.outputText.value = '';
+            this.updateStatus('🟢 Nhập văn bản để dịch');
             return;
         }
-    } else {
-        detectedLanguageDiv.style.display = 'none'; // Ẩn phần ngôn ngữ được phát hiện nếu không chọn
+
+        let sourceLang = this.elements.sourceLanguage.value;
+
+        if (detectLangCheckbox.checked) {
+            this.updateStatus('🔄 Đang phát hiện ngôn ngữ...');
+            
+            try {
+                sourceLang = await this.translator.detectLanguage(text);
+                this.elements.sourceLanguage.value = sourceLang; // Cập nhật ngôn ngữ gốc
+                detectedLangText.textContent = sourceLang; // Hiển thị ngôn ngữ được phát hiện
+                detectedLanguageDiv.style.display = 'block'; // Hiện phần ngôn ngữ được phát hiện
+                this.updateStatus(`🔄 Đã phát hiện ngôn ngữ: ${sourceLang}`);
+            } catch (error) {
+                console.error('Lỗi phát hiện ngôn ngữ:', error);
+                this.elements.outputText.value = '❌ Lỗi phát hiện ngôn ngữ: ' + error.message;
+                return;
+            }
+        } else {
+            detectedLanguageDiv.style.display = 'none'; // Ẩn phần ngôn ngữ được phát hiện nếu không chọn
+        }
+
+        const targetLang = this.elements.targetLanguage.value;
+
+        this.updateStatus('🔄 Đang dịch...');
+        this.elements.outputText.value = '🔄 Đang xử lý...';
+
+        try {
+            const translatedText = await this.translator.translate(text, sourceLang, targetLang);
+            this.elements.outputText.value = translatedText;
+            this.updateStatus(`✅ Đã dịch thành công (${this.translator.currentMethod})`);
+            
+            console.log('Dịch thành công:', {
+                original: text,
+                translated: translatedText,
+                method: this.translator.currentMethod
+            });
+            
+        } catch (error) {
+            console.error('Lỗi dịch thuật:', error);
+            
+            this.elements.outputText.value = '❌ Lỗi: ' + error.message;
+            this.updateStatus('❌ Lỗi dịch thuật');
+        }
     }
-
-    const targetLang = this.elements.targetLanguage.value;
-
-    this.updateStatus('🔄 Đang dịch...');
-    this.elements.outputText.value = '🔄 Đang xử lý...';
-
-    try {
-        const translatedText = await this.translator.translate(text, sourceLang, targetLang);
-        this.elements.outputText.value = translatedText;
-        this.updateStatus(`✅ Đã dịch thành công (${this.translator.currentMethod})`);
-        
-        console.log('Dịch thành công:', {
-            original: text,
-            translated: translatedText,
-            method: this.translator.currentMethod
-        });
-        
-    } catch (error) {
-        console.error('Lỗi dịch thuật:', error);
-        
-        this.elements.outputText.value = '❌ Lỗi: ' + error.message;
-        this.updateStatus('❌ Lỗi dịch thuật');
-    }
-}
 }
 
 // KHỞI CHẠY ỨNG DỤNG KHI TRANG ĐƯỢC TẢI
@@ -353,17 +348,3 @@ window.addEventListener('offline', function() {
         window.translationApp.updateStatus('❌ Mất kết nối internet');
     }
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
