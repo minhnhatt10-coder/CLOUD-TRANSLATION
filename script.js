@@ -178,6 +178,11 @@ class TranslationApp {
         // Đặt lại ngôn ngữ đích nếu nó trùng với ngôn ngữ gốc
         if (targetLangSelect.value === sourceLang) {
             targetLangSelect.value = targetLangSelect.options[0].value; // Chọn ngôn ngữ đầu tiên
+             this.updateStatus('Trùng ngôn ngữ');
+        }
+        if (sourceLang.value === targetLangSelect) {
+            sourceLang.value = sourceLang.options[0].value; // Chọn ngôn ngữ đầu tiên
+               this.updateStatus('Trùng ngôn ngữ');
         }
     }
 
@@ -188,6 +193,11 @@ class TranslationApp {
         // Đặt lại ngôn ngữ gốc nếu nó trùng với ngôn ngữ đích
         if (sourceLangSelect.value === targetLang) {
             sourceLangSelect.value = sourceLangSelect.options[0].value; // Chọn ngôn ngữ đầu tiên
+               this.updateStatus('Trùng ngôn ngữ');
+        }
+        if (sourceLang.value === targetLangSelect) {
+            sourceLang.value = sourceLang.options[0].value; // Chọn ngôn ngữ đầu tiên
+               this.updateStatus('Trùng ngôn ngữ');
         }
     }
 
@@ -294,3 +304,4 @@ window.addEventListener('offline', function() {
         window.translationApp.updateStatus('❌ Mất kết nối internet');
     }
 });
+
