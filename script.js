@@ -70,7 +70,7 @@ class FreeTranslationService {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': 'Bearer YOUR_API_KEY' // Thay thế bằng API key của bạn
+                    'Authorization': 'c02de8aa8aca8336c7d219abbafcca59' // Thay thế bằng API key của bạn
                 },
                 body: JSON.stringify({ q: text })
             });
@@ -348,3 +348,4 @@ window.addEventListener('offline', function() {
         window.translationApp.updateStatus('❌ Mất kết nối internet');
     }
 });
+
