@@ -168,7 +168,7 @@ class TranslationApp {
         const sourceLang = this.elements.sourceLanguage.value;
         const targetLangSelect = this.elements.targetLanguage;
 
-        const optionz_zero_sourceLang = this.elements.sourceLanguage;
+        const optionz_zero_sourceLang = this.elements.sourceLanguage.value;
         const TargetL = this.elements.targetLanguage.value;
          
         //Array.from(targetLangSelect.options).forEach(option => {
@@ -184,7 +184,7 @@ class TranslationApp {
             targetLangSelect.value = targetLangSelect.options[0].value; // Chọn ngôn ngữ đầu tiên
                  this.updateStatus(`❌ Trùng ngôn ngữ (${this.translator.currentMethod})`);
         }
-          if (optionz_zero_sourceLang.options[0].value === targetLang) {
+       if (optionz_zero_sourceLang === TargetLTargetL.options[1].value) {
             TargetL.value = TargetL.options[0].value;
             sourceLangSelect.value = sourceLangSelect.options[0].value;
              this.updateStatus(`❌ Trùng ngôn ngữ (${this.translator.currentMethod})`);
@@ -195,7 +195,7 @@ class TranslationApp {
         const targetLang = this.elements.targetLanguage.value;
         const sourceLangSelect = this.elements.sourceLanguage;
 
-        const optionz_zero_sourceLang = this.elements.sourceLanguage;
+        const optionz_zero_sourceLang = this.elements.sourceLanguage.value;
         const TargetL = this.elements.targetLanguage.value;
             
         // Đặt lại ngôn ngữ gốc nếu nó trùng với ngôn ngữ đích
@@ -203,7 +203,7 @@ class TranslationApp {
             sourceLangSelect.value = sourceLangSelect.options[0].value; // Chọn ngôn ngữ đầu tiên
                 this.updateStatus(`❌ Trùng ngôn ngữ (${this.translator.currentMethod})`);
         }
-        if (optionz_zero_sourceLang.options[0].value === targetLang) {
+        if (optionz_zero_sourceLang === TargetLTargetL.options[1].value) {
             TargetL.value = TargetL.options[0].value;
             sourceLangSelect.value = sourceLangSelect.options[0].value;
              this.updateStatus(`❌ Trùng ngôn ngữ (${this.translator.currentMethod})`);
@@ -313,6 +313,7 @@ window.addEventListener('offline', function() {
         window.translationApp.updateStatus('❌ Mất kết nối internet');
     }
 });
+
 
 
 
