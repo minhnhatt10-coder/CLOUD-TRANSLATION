@@ -164,7 +164,9 @@ class TranslationApp {
     }
 
     updateTargetLanguageOptions() {
-        const sourceLang = this.elements.sourceLanguage.value;
+        const targetLang = this.elements.targetLanguage.value;
+        
+        const sourceLangSelect = this.elements.sourceLanguage;
         const targetLangSelect = this.elements.targetLanguage;
 
         Array.from(targetLangSelect.options).forEach(option => {
@@ -175,28 +177,24 @@ class TranslationApp {
             }
         });
 
-        // Đặt lại ngôn ngữ đích nếu nó trùng với ngôn ngữ gốc
-        if (targetLangSelect.value === sourceLang) {
-            targetLangSelect.value = targetLangSelect.options[0].value; // Chọn ngôn ngữ đầu tiên
-                 this.updateStatus(`❌ Trùng ngôn ngữ (${this.translator.currentMethod})`);
-        }
-        else if (sourceLang.value === targetLangSelect) {
-            sourceLang.value = sourceLang.options[0].value; // Chọn ngôn ngữ đầu tiên
-                   this.updateStatus(`❌ Trùng ngôn ngữ (${this.translator.currentMethod})`);
+         // Đặt lại ngôn ngữ gốc nếu nó trùng với ngôn ngữ đích
+        if (sourceLangSelect.value === targetLang) {
+            sourceLangSelect.value = sourceLangSelect.options[0].value; // Chọn ngôn ngữ đầu tiên
+              sourceLangSelect.value = targetLangSelect.options[0].value; // Chọn ngôn ngữ đầu tiên
+                this.updateStatus(`❌ Trùng ngôn ngữ (${this.translator.currentMethod})`);
         }
     }
 
     updateSourceLanguage() {
         const targetLang = this.elements.targetLanguage.value;
+        
         const sourceLangSelect = this.elements.sourceLanguage;
+        const targetLangSelect = this.elements.targetLanguage;
 
         // Đặt lại ngôn ngữ gốc nếu nó trùng với ngôn ngữ đích
         if (sourceLangSelect.value === targetLang) {
             sourceLangSelect.value = sourceLangSelect.options[0].value; // Chọn ngôn ngữ đầu tiên
-                this.updateStatus(`❌ Trùng ngôn ngữ (${this.translator.currentMethod})`);
-        }
-        else if (sourceLang.value === targetLangSelect) {
-            sourceLang.value = sourceLang.options[0].value; // Chọn ngôn ngữ đầu tiên
+              sourceLangSelect.value = targetLangSelect.options[0].value; // Chọn ngôn ngữ đầu tiên
                 this.updateStatus(`❌ Trùng ngôn ngữ (${this.translator.currentMethod})`);
         }
     }
@@ -304,5 +302,6 @@ window.addEventListener('offline', function() {
         window.translationApp.updateStatus('❌ Mất kết nối internet');
     }
 });
+
 
 
