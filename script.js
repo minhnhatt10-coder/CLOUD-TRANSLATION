@@ -115,6 +115,7 @@ class TranslationApp {
             inputText: document.getElementById('inputText'),
             outputText: document.getElementById('outputText'),
             targetLanguage: document.getElementById('targetLanguage'),
+            sourceLanguage: document.getElementById('sourceLanguage'), // Thêm dòng này
             translationMethod: document.getElementById('translationMethod'),
             translateBtn: document.getElementById('translateBtn'),
             charCount: document.getElementById('charCount'),
@@ -125,6 +126,7 @@ class TranslationApp {
         this.updateStatus('🟢 Sẵn sàng dịch văn bản');
         
         console.log('Ứng dụng dịch thuật đã khởi động!');
+        this.updateTargetLanguageOptions(); // Gọi hàm khi khởi động
     }
 
     bindEvents() {
@@ -138,6 +140,14 @@ class TranslationApp {
         });
 
         this.elements.targetLanguage.addEventListener('change', () => {
+            this.updateTargetLanguageOptions(); // Gọi hàm khi thay đổi ngôn ngữ đích
+            if (this.elements.inputText.value.trim()) {
+                this.handleTranslation();
+            }
+        });
+
+        this.elements.sourceLanguage.addEventListener('change', () => {
+            this.updateTargetLanguageOptions(); // Gọi hàm khi thay đổi ngôn ngữ gốc
             if (this.elements.inputText.value.trim()) {
                 this.handleTranslation();
             }
@@ -149,6 +159,25 @@ class TranslationApp {
                 this.handleTranslation();
             }
         });
+    }
+
+    // Hàm để cập nhật tùy chọn ngôn ngữ đích
+    updateTargetLanguageOptions() {
+        const sourceLang = this.elements.sourceLanguage.value;
+        const targetLangSelect = this.elements.targetLanguage;
+
+        Array.from(targetLangSelect.options).forEach(option => {
+            if (option.value === sourceLang) {
+                option.style.display = 'none'; // Ẩn ngôn ngữ giống với ngôn ngữ gốc
+            } else {
+                option.style.display = 'block'; // Hiện các ngôn ngữ khác
+            }
+        });
+
+        // Đặt lại ngôn ngữ đích nếu nó trùng với ngôn ngữ gốc
+        if (targetLangSelect.value === sourceLang) {
+            targetLangSelect.value = targetLangSelect.options[0].value; // Chọn ngôn ngữ đầu tiên
+        }
     }
 
     updateCharCount() {
@@ -253,4 +282,5 @@ window.addEventListener('offline', function() {
         window.translationApp.updateStatus('❌ Mất kết nối internet');
     }
 });
+
 
