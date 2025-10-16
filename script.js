@@ -247,38 +247,55 @@ class TranslationApp {
         }, 1000);
     }
 
-    async handleTranslation() {
-        const text = this.elements.inputText.value.trim();
-        const sourceLang = this.elements.sourceLanguage.value;
-        const targetLang = this.elements.targetLanguage.value;
-        
-        if (!text) {
-            this.elements.outputText.value = '';
-            this.updateStatus('🟢 Nhập văn bản để dịch');
-            return;
-        }
+  async handleTranslation() {
+    const text = this.elements.inputText.value.trim();
+    const detectLangCheckbox = document.getElementById('detectLang');
 
-        this.updateStatus('🔄 Đang dịch...');
-        this.elements.outputText.value = '🔄 Đang xử lý...';
+    if (!text) {
+        this.elements.outputText.value = '';
+        this.updateStatus('🟢 Nhập văn bản để dịch');
+        return;
+    }
+
+    let sourceLang = this.elements.sourceLanguage.value;
+
+    if (detectLangCheckbox.checked) {
+        this.updateStatus('🔄 Đang phát hiện ngôn ngữ...');
         
         try {
-            const translatedText = await this.translator.translate(text, sourceLang, targetLang);
-            this.elements.outputText.value = translatedText;
-            this.updateStatus(`✅ Đã dịch thành công (${this.translator.currentMethod})`);
-            
-            console.log('Dịch thành công:', {
-                original: text,
-                translated: translatedText,
-                method: this.translator.currentMethod
-            });
-            
+            sourceLang = await this.translator.detectLanguage(text);
+            this.elements.sourceLanguage.value = sourceLang; // Cập nhật ngôn ngữ gốc
+            this.updateStatus(`🔄 Đã phát hiện ngôn ngữ: ${sourceLang}`);
         } catch (error) {
-            console.error('Lỗi dịch thuật:', error);
-            
-            this.elements.outputText.value = '❌ Lỗi: ' + error.message + '\n\n💡 Mẹo:\n• Kiểm tra kết nối internet\n• Thử phương thức dịch khác\n• Thử lại với văn bản ngắn hơn';
-            this.updateStatus('❌ Lỗi dịch thuật');
+            console.error('Lỗi phát hiện ngôn ngữ:', error);
+            this.elements.outputText.value = '❌ Lỗi phát hiện ngôn ngữ: ' + error.message;
+            return;
         }
     }
+
+    const targetLang = this.elements.targetLanguage.value;
+
+    this.updateStatus('🔄 Đang dịch...');
+    this.elements.outputText.value = '🔄 Đang xử lý...';
+
+    try {
+        const translatedText = await this.translator.translate(text, sourceLang, targetLang);
+        this.elements.outputText.value = translatedText;
+        this.updateStatus(`✅ Đã dịch thành công (${this.translator.currentMethod})`);
+        
+        console.log('Dịch thành công:', {
+            original: text,
+            translated: translatedText,
+            method: this.translator.currentMethod
+        });
+        
+    } catch (error) {
+        console.error('Lỗi dịch thuật:', error);
+        
+        this.elements.outputText.value = '❌ Lỗi: ' + error.message;
+        this.updateStatus('❌ Lỗi dịch thuật');
+    }
+}
 }
 
 // KHỞI CHẠY ỨNG DỤNG KHI TRANG ĐƯỢC TẢI
@@ -313,6 +330,7 @@ window.addEventListener('offline', function() {
         window.translationApp.updateStatus('❌ Mất kết nối internet');
     }
 });
+
 
 
 
