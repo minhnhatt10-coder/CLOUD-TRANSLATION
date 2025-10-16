@@ -168,6 +168,9 @@ class TranslationApp {
         const sourceLang = this.elements.sourceLanguage.value;
         const targetLangSelect = this.elements.targetLanguage;
 
+        const optionz_zero_sourceLang = this.elements.sourceLanguage;
+        const TargetL = this.elements.targetLanguage.value;
+         
         //Array.from(targetLangSelect.options).forEach(option => {
        //     if (option.value === sourceLang) {
        //         option.style.display = 'none'; // Ẩn ngôn ngữ giống với ngôn ngữ gốc
@@ -181,16 +184,27 @@ class TranslationApp {
             targetLangSelect.value = targetLangSelect.options[0].value; // Chọn ngôn ngữ đầu tiên
                  this.updateStatus(`❌ Trùng ngôn ngữ (${this.translator.currentMethod})`);
         }
+          if (optionz_zero_sourceLang.options[0].value === targetLang) {
+            TargetL.value = TargetL.options[0].value;
+             this.updateStatus(`❌ Trùng ngôn ngữ (${this.translator.currentMethod})`);
+        }
     }
 
     updateSourceLanguage() {
         const targetLang = this.elements.targetLanguage.value;
         const sourceLangSelect = this.elements.sourceLanguage;
 
+        const optionz_zero_sourceLang = this.elements.sourceLanguage;
+        const TargetL = this.elements.targetLanguage.value;
+            
         // Đặt lại ngôn ngữ gốc nếu nó trùng với ngôn ngữ đích
         if (sourceLangSelect.value === targetLang) {
             sourceLangSelect.value = sourceLangSelect.options[0].value; // Chọn ngôn ngữ đầu tiên
                 this.updateStatus(`❌ Trùng ngôn ngữ (${this.translator.currentMethod})`);
+        }
+        if (optionz_zero_sourceLang.options[0].value === targetLang) {
+            TargetL.value = TargetL.options[0].value;
+             this.updateStatus(`❌ Trùng ngôn ngữ (${this.translator.currentMethod})`);
         }
     }
 
@@ -297,6 +311,7 @@ window.addEventListener('offline', function() {
         window.translationApp.updateStatus('❌ Mất kết nối internet');
     }
 });
+
 
 
 
